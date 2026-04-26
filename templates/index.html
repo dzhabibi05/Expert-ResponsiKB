@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CabaiExpert</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Syne:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <div class="glow-bg"></div>
+
+    <!-- HEADER -->
+    <header>
+      <div class="header-inner">
+        <div class="logo">
+          <div>
+            <div class="logo-name">CabaiExpert</div>
+            <div class="logo-sub">Sistem Pakar · Diagnosis Penyakit Cabai</div>
+          </div>
+        </div>
+        <div class="header-pills">
+          <span class="pill">7 Penyakit</span>
+          <span class="pill">25 Gejala</span>
+          <span class="pill accent-pill">Forward Chaining</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-text">
+          <div class="hero-eyebrow">Sistem Pakar Pertanian</div>
+          <h1>Identifikasi<br /><em>penyakit cabai</em><br />dengan tepat.</h1>
+          <p>
+            Pilih gejala yang Anda temukan pada tanaman cabai. Mesin inferensi
+            <strong>forward chaining</strong> akan mencocokkan fakta dengan
+            basis pengetahuan dan memberikan diagnosis serta langkah penanganan.
+          </p>
+          <div class="hero-stats">
+            <div class="hstat">
+              <span class="hstat-n">7</span
+              ><span class="hstat-l">Penyakit</span>
+            </div>
+            <div class="hstat-sep"></div>
+            <div class="hstat">
+              <span class="hstat-n">25</span
+              ><span class="hstat-l">Parameter</span>
+            </div>
+            <div class="hstat-sep"></div>
+            <div class="hstat">
+              <span class="hstat-n">CF</span
+              ><span class="hstat-l">Keyakinan</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="chili-ring">
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
+            <div class="ring r3"></div>
+            <div class="chili-center">🌶️</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WORKSPACE -->
+      <div class="workspace">
+        <!-- LEFT: GEJALA PANEL -->
+        <aside class="gejala-panel">
+          <div class="panel-top">
+            <div class="panel-title">
+              <span class="step-badge">01</span>
+              Pilih Gejala yang Ditemukan
+            </div>
+            <div class="count-info" id="count-info">
+              <span id="count-num">0</span> gejala dipilih
+            </div>
+          </div>
+
+          <div class="search-box">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="9" cy="9" r="6" />
+              <path d="m15 15 3 3" stroke-linecap="round" />
+            </svg>
+            <input type="text" id="search-input" placeholder="Cari gejala..." />
+          </div>
+
+          <div class="gejala-scroll" id="gejala-scroll">
+            {% for kategori, gejala_list in kategori_map.items() %}
+            <div class="gejala-group" data-kat="{{ kategori }}">
+              <div class="group-head">
+                <span class="group-dot"></span>{{ kategori }}
+              </div>
+              {% for g in gejala_list %}
+              <label class="gejala-item" data-search="{{ g.label|lower }}">
+                <input type="checkbox" class="g-check" value="{{ g.id }}" />
+                <div class="g-box">
+                  <svg
+                    class="g-tick"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    stroke="white"
+                    stroke-width="2.5"
+                  >
+                    <polyline points="2,6 5,9 10,3" />
+                  </svg>
+                </div>
+                <span class="g-text">{{ g.label }}</span>
+              </label>
+              {% endfor %}
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="panel-actions">
+            <button class="btn-clear" id="btn-clear">Hapus Semua</button>
+            <button class="btn-diagnosa" id="btn-diagnosa">
+              <span class="btn-text">Diagnosa</span>
+              <span class="btn-icon">→</span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- RIGHT: RESULT PANEL -->
+        <section class="result-panel">
+          <!-- IDLE -->
+          <div class="idle-state" id="idle-state">
+            <div class="idle-rings">
+              <div class="idle-ring ir1"></div>
+              <div class="idle-ring ir2"></div>
+              <div class="idle-emoji">🔬</div>
+            </div>
+            <h2 class="idle-title">Siap Menganalisis</h2>
+            <p class="idle-desc">
+              Centang gejala yang terlihat pada tanaman, lalu klik
+              <strong>Diagnosa</strong>.
+            </p>
+            <div class="idle-tips">
+              <div class="tip-row">
+                <span class="tip-dot">◆</span> Perhatikan gejala pada buah,
+                daun, batang, dan akar
+              </div>
+              <div class="tip-row">
+                <span class="tip-dot">◆</span> Catat kondisi lingkungan dan
+                cuaca terkini
+              </div>
+              <div class="tip-row">
+                <span class="tip-dot">◆</span> Semakin banyak gejala = diagnosis
+                lebih akurat
+              </div>
+            </div>
+          </div>
+
+          <!-- RESULT -->
+          <div class="result-state hidden" id="result-state">
+            <div class="result-top">
+              <div class="panel-title">
+                <span class="step-badge">02</span>
+                Hasil Diagnosis
+              </div>
+              <div class="result-meta" id="result-meta"></div>
+            </div>
+
+            <!-- Recap -->
+            <div class="recap-wrap" id="recap-wrap"></div>
+
+            <!-- Cards -->
+            <div class="diag-cards" id="diag-cards"></div>
+
+            <!-- No match -->
+            <div class="no-match hidden" id="no-match">
+              <div class="no-match-icon">🔍</div>
+              <div class="no-match-title">Tidak Ada Kecocokan</div>
+              <p class="no-match-desc">
+                Gejala yang dipilih tidak cocok dengan pola penyakit dalam basis
+                pengetahuan. Coba tambahkan lebih banyak gejala atau
+                konsultasikan dengan penyuluh pertanian.
+              </p>
+            </div>
+
+            <button class="btn-ulang" id="btn-ulang">← Ulangi Diagnosis</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- METHOD -->
+      <section class="method">
+        <div class="method-inner">
+          <div class="method-label">
+            <span class="step-badge">03</span>
+            Alur Kerja Sistem
+          </div>
+          <div class="method-flow">
+            <div class="mf-step">
+              <div class="mf-num">1</div>
+              <div class="mf-icon">📋</div>
+              <div class="mf-title">Fakta Input</div>
+              <div class="mf-desc">
+                Gejala yang dipilih pengguna menjadi fakta awal dalam working
+                memory sistem.
+              </div>
+            </div>
+            <div class="mf-arrow">⟶</div>
+            <div class="mf-step">
+              <div class="mf-num">2</div>
+              <div class="mf-icon">⚙️</div>
+              <div class="mf-title">Forward Chaining</div>
+              <div class="mf-desc">
+                Setiap aturan IF-THEN dievaluasi. Aturan aktif jika fakta
+                memenuhi premis (gejala kuat + pendukung).
+              </div>
+            </div>
+            <div class="mf-arrow">⟶</div>
+            <div class="mf-step">
+              <div class="mf-num">3</div>
+              <div class="mf-icon">📊</div>
+              <div class="mf-title">Nilai CF</div>
+              <div class="mf-desc">
+                Confidence factor dihitung: gejala kuat (bobot 2×) dan pendukung
+                (bobot 1×) dibagi total bobot aturan.
+              </div>
+            </div>
+            <div class="mf-arrow">⟶</div>
+            <div class="mf-step">
+              <div class="mf-num">4</div>
+              <div class="mf-icon">💊</div>
+              <div class="mf-title">Rekomendasi</div>
+              <div class="mf-desc">
+                Hasil diurutkan berdasarkan CF tertinggi. Setiap diagnosis
+                disertai penanganan dan pencegahan.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        CabaiExpert · Sistem Pakar Kecerdasan Buatan · Forward Chaining ·
+        <span id="yr"></span>
+      </p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>
