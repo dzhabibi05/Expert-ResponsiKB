@@ -15,11 +15,11 @@ Sistem ini adalah sebuah aplikasi berbasis web (Sistem Pakar) yang digunakan unt
 1. Pastikan Python sudah terinstal di komputer Anda.
 2. Buka terminal/command prompt dan arahkan ke direktori proyek ini.
 3. Install semua dependensi yang dibutuhkan dengan perintah:
-   `ash
+   `
    pip install -r requirements.txt
    `
 4. Jalankan aplikasi menggunakan perintah:
-   `ash
+   `
    python app.py
    `
 5. Buka web browser Anda dan akses aplikasi di http://127.0.0.1:3000 (atau sesuai dengan port localhost yang tertera di terminal).
